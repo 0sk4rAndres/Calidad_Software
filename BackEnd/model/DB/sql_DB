@@ -1,0 +1,137 @@
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `Inmigrante`;
+DROP TABLE IF EXISTS `Genero`;
+DROP TABLE IF EXISTS `Genero_Inmigrante`;
+DROP TABLE IF EXISTS `Razones_Migracion`;
+DROP TABLE IF EXISTS `Razones_Inmigrante`;
+DROP TABLE IF EXISTS `pais_origen`;
+DROP TABLE IF EXISTS `pais_entrada`;
+DROP TABLE IF EXISTS `pais`;
+DROP TABLE IF EXISTS `Grupo_Sanguineo`;
+DROP TABLE IF EXISTS `Sanguineo_Inmigrante`;
+DROP TABLE IF EXISTS `Registro_Inmigrante`;
+DROP TABLE IF EXISTS `Funcionario`;
+DROP TABLE IF EXISTS `pais_funcionario`;
+DROP TABLE IF EXISTS `Sitio_Interes`;
+DROP TABLE IF EXISTS `pais_interes`;
+DROP TABLE IF EXISTS `Colocar_sitio`;
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE `Inmigrante` (
+    `NIT` BIGINT(20) NOT NULL,
+    `nombre` VARCHAR(50) NOT NULL,
+    `apellido` VARCHAR(50) NOT NULL,
+    `fecha_nacimiento` DATE NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
+    `celular` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`NIT`)
+);
+
+CREATE TABLE `Genero` (
+    `nombre_genero` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`nombre_genero`)
+);
+
+CREATE TABLE `Genero_Inmigrante` (
+    `nombre_genero` VARCHAR(50) NOT NULL,
+    `NIT` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`nombre_genero`, `NIT`)
+);
+
+CREATE TABLE `Razones_Migracion` (
+    `razon` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`razon`)
+);
+
+CREATE TABLE `Razones_Inmigrante` (
+    `razon` VARCHAR(100) NOT NULL,
+    `NIT` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`razon`, `NIT`)
+);
+
+CREATE TABLE `pais_origen` (
+    `pais` VARCHAR(50) NOT NULL,
+    `NIT` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`pais`, `NIT`)
+);
+
+CREATE TABLE `pais_entrada` (
+    `pais` VARCHAR(50) NOT NULL,
+    `NIT` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`pais`, `NIT`)
+);
+
+CREATE TABLE `pais` (
+    `pais` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`pais`)
+);
+
+CREATE TABLE `Grupo_Sanguineo` (
+    `RH` VARCHAR(7) NOT NULL,
+    PRIMARY KEY (`RH`)
+);
+
+CREATE TABLE `Sanguineo_Inmigrante` (
+    `RH` VARCHAR(7) NOT NULL,
+    `NIT` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`RH`, `NIT`)
+);
+
+CREATE TABLE `Registro_Inmigrante` (
+    `cedula_funcionario` BIGINT(20) NOT NULL,
+    `NIT` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`cedula_funcionario`, `NIT`)
+);
+
+CREATE TABLE `Funcionario` (
+    `cedula_funcionario` BIGINT(20) NOT NULL,
+    `nombre` VARCHAR(50) NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`cedula_funcionario`)
+);
+
+CREATE TABLE `pais_funcionario` (
+    `pais` VARCHAR(50) NOT NULL,
+    `cedula_funcionario` BIGINT(20) NOT NULL,
+    PRIMARY KEY (`pais`, `cedula_funcionario`)
+);
+
+CREATE TABLE `Sitio_Interes` (
+    `id_sitio` BIGINT(16) NOT NULL,
+    `nombre` VARCHAR(50) NOT NULL,
+    `ciudad` VARCHAR(50) NOT NULL,
+    `ubicacion` VARCHAR(100) NOT NULL,
+    `disponibilidad` BOOLEAN NOT NULL,
+    PRIMARY KEY (`id_sitio`)
+);
+
+CREATE TABLE `pais_interes` (
+    `pais` VARCHAR(50) NOT NULL,
+    `id_sitio` BIGINT(16) NOT NULL,
+    PRIMARY KEY (`pais`, `id_sitio`)
+);
+
+CREATE TABLE `Colocar_sitio` (
+    `cedula_funcionario` BIGINT(20) NOT NULL,
+    `id_sitio` BIGINT(16) NOT NULL,
+    PRIMARY KEY (`cedula_funcionario`, `id_sitio`)
+);
+
+ALTER TABLE `Genero_Inmigrante` ADD FOREIGN KEY (`nombre_genero`) REFERENCES `Genero`(`nombre_genero`);
+ALTER TABLE `Genero_Inmigrante` ADD FOREIGN KEY (`NIT`) REFERENCES `Inmigrante`(`NIT`);
+ALTER TABLE `Razones_Inmigrante` ADD FOREIGN KEY (`razon`) REFERENCES `Razones_Migracion`(`razon`);
+ALTER TABLE `Razones_Inmigrante` ADD FOREIGN KEY (`NIT`) REFERENCES `Inmigrante`(`NIT`);
+ALTER TABLE `pais_origen` ADD FOREIGN KEY (`NIT`) REFERENCES `Inmigrante`(`NIT`);
+ALTER TABLE `pais_origen` ADD FOREIGN KEY (`pais`) REFERENCES `pais`(`pais`);
+ALTER TABLE `pais_entrada` ADD FOREIGN KEY (`NIT`) REFERENCES `Inmigrante`(`NIT`);
+ALTER TABLE `pais_entrada` ADD FOREIGN KEY (`pais`) REFERENCES `pais`(`pais`);
+ALTER TABLE `Sanguineo_Inmigrante` ADD FOREIGN KEY (`RH`) REFERENCES `Grupo_Sanguineo`(`RH`);
+ALTER TABLE `Sanguineo_Inmigrante` ADD FOREIGN KEY (`NIT`) REFERENCES `Inmigrante`(`NIT`);
+ALTER TABLE `Registro_Inmigrante` ADD FOREIGN KEY (`NIT`) REFERENCES `Inmigrante`(`NIT`);
+ALTER TABLE `Registro_Inmigrante` ADD FOREIGN KEY (`cedula_funcionario`) REFERENCES `Funcionario`(`cedula_funcionario`);
+ALTER TABLE `pais_funcionario` ADD FOREIGN KEY (`pais`) REFERENCES `pais`(`pais`);
+ALTER TABLE `pais_funcionario` ADD FOREIGN KEY (`cedula_funcionario`) REFERENCES `Funcionario`(`cedula_funcionario`);
+ALTER TABLE `pais_interes` ADD FOREIGN KEY (`pais`) REFERENCES `pais`(`pais`);
+ALTER TABLE `pais_interes` ADD FOREIGN KEY (`id_sitio`) REFERENCES `Sitio_Interes`(`id_sitio`);
+ALTER TABLE `Colocar_sitio` ADD FOREIGN KEY (`cedula_funcionario`) REFERENCES `Funcionario`(`cedula_funcionario`);
+ALTER TABLE `Colocar_sitio` ADD FOREIGN KEY (`id_sitio`) REFERENCES `Sitio_Interes`(`id_sitio`);
